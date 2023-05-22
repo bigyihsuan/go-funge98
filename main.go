@@ -18,15 +18,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	if opts.Debug {
-		fmt.Printf("file:%v\n", opts.File)
-		fmt.Printf("debug:%v\n", opts.Debug)
-	}
+	fmt.Printf("file:%v\n", opts.File)
+	fmt.Printf("debug:%v\n", opts.Debug)
 
 	interpreter, err := eval.NewInterpreter(string(opts.File))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	fmt.Println(interpreter)
+	fmt.Println(interpreter.Space)
+	for i := 0; i < 100; i++ {
+		interpreter.Tick()
+	}
 }

@@ -1,4 +1,4 @@
- >              v
- v"Hello World!"<
- >:v
- ^,_@
+>              v
+v"Hello World!"<
+>:v
+^,_@

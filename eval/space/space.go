@@ -1,6 +1,7 @@
 package space
 
 import (
+	"go-funge98/util"
 	"strings"
 )
 
@@ -62,6 +63,10 @@ func (s *Space) resize(x, y int) {
 func (s Space) Get(x, y int) (t rune) {
 	s.resize(x, y)
 	return s.space[x][y]
+}
+
+func (s Space) GetVec(v util.Vec) (t rune) {
+	return s.Get(v.X, v.Y)
 }
 
 // Set the cell at this (x,y) location.
