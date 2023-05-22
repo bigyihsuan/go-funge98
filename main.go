@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-funge98/eval"
 	"os"
 
 	"github.com/jessevdk/go-flags"
@@ -17,6 +18,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("file:%v\n", opts.File)
-	fmt.Printf("debug:%v\n", opts.Debug)
+	if opts.Debug {
+		fmt.Printf("file:%v\n", opts.File)
+		fmt.Printf("debug:%v\n", opts.Debug)
+	}
+
+	interpreter, err := eval.NewInterpreter(string(opts.File))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	fmt.Println(interpreter)
 }
