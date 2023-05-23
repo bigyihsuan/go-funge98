@@ -45,10 +45,10 @@ func (s *Space) resize(x, y int) {
 		return
 	}
 	newX, newY := s.Xsize(), s.Ysize()
-	if x > newX {
+	if x >= newX {
 		newX = x + 1
 	}
-	if y > newY {
+	if y >= newY {
 		newY = y + 1
 	}
 	newSpace := New(newX, newY, s.filler)

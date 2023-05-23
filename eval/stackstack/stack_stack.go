@@ -9,11 +9,13 @@ type StackStack[T any] struct {
 func New[T any]() StackStack[T] {
 	var ss StackStack[T]
 	ss.stack = stack.NewStack[*stack.Stack[T]](16)
+	inner := stack.NewStack[T](16)
+	ss.stack.Push(inner)
 	return ss
 }
 
 func (ss *StackStack[T]) PushCell(cell T) {
-	if ok, top := ss.stack.Pop(); ok {
+	if ok, top := ss.stack.Peek(); ok {
 		top.Push(cell)
 	}
 }
@@ -21,7 +23,7 @@ func (ss *StackStack[T]) PopCell() T {
 	var v T
 	if ok, top := ss.stack.Peek(); !ok {
 		return v
-	} else if ok, cell := top.Peek(); !ok {
+	} else if ok, cell := top.Pop(); !ok {
 		return v
 	} else {
 		return cell

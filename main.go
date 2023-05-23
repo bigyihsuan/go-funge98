@@ -36,11 +36,12 @@ func main() {
 		}
 	}
 
-	if ok, s := interpreter.Stack.PopStack(); ok && s != nil {
-		for s.Count() > 0 {
-			fmt.Println(s.Pop())
-		}
+	_, s := interpreter.Stack.PopStack()
+	for s.Count() > 0 {
+		_, e := s.Pop()
+		fmt.Printf("%v ", e)
 	}
+	fmt.Println()
 
 	if exitCode != nil {
 		os.Exit(exitCode.Code)

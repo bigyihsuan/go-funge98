@@ -77,6 +77,30 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 		'j': (*Interpreter).JumpForward,
 		'q': (*Interpreter).Quit,
 		'k': (*Interpreter).Iterate,
+		// TODO: decision making
+		// data
+		// integers
+		'0': (*Interpreter).PushNumber,
+		'1': (*Interpreter).PushNumber,
+		'2': (*Interpreter).PushNumber,
+		'3': (*Interpreter).PushNumber,
+		'4': (*Interpreter).PushNumber,
+		'5': (*Interpreter).PushNumber,
+		'6': (*Interpreter).PushNumber,
+		'7': (*Interpreter).PushNumber,
+		'8': (*Interpreter).PushNumber,
+		'9': (*Interpreter).PushNumber,
+		'a': (*Interpreter).PushNumber,
+		'b': (*Interpreter).PushNumber,
+		'c': (*Interpreter).PushNumber,
+		'd': (*Interpreter).PushNumber,
+		'e': (*Interpreter).PushNumber,
+		'f': (*Interpreter).PushNumber,
+		'+': (*Interpreter).Add,
+		'*': (*Interpreter).Multiply,
+		'-': (*Interpreter).Subtract,
+		'/': (*Interpreter).Divide,
+		'%': (*Interpreter).Remainder,
 	}
 	i.instructions = instructions
 	return &i, nil
