@@ -1,6 +1,7 @@
-package eval
+package interpreter
 
 import (
+	"go-funge98/eval"
 	"go-funge98/util"
 	"math/rand"
 	"time"
@@ -15,24 +16,29 @@ var (
 	west  = util.Vec{Y: -1, X: 0}
 )
 
-func (i *Interpreter) PointSouth() {
+func (i *Interpreter) PointSouth() (exit *eval.ExitCode) {
 	i.Delta = south
+	return
 }
-func (i *Interpreter) PointEast() {
+func (i *Interpreter) PointEast() (exit *eval.ExitCode) {
 	i.Delta = east
+	return
 }
-func (i *Interpreter) PointNorth() {
+func (i *Interpreter) PointNorth() (exit *eval.ExitCode) {
 	i.Delta = north
+	return
 }
-func (i *Interpreter) PointWest() {
+func (i *Interpreter) PointWest() (exit *eval.ExitCode) {
 	i.Delta = west
+	return
 }
-func (i *Interpreter) PointRandomly() {
+func (i *Interpreter) PointRandomly() (exit *eval.ExitCode) {
 	s := rand.NewSource(time.Now().Unix())
 	r := rand.New(s)
 	i.Delta = []util.Vec{south, east, north, west}[r.Intn(4)]
+	return
 }
-func (i *Interpreter) TurnLeft() {
+func (i *Interpreter) TurnLeft() (exit *eval.ExitCode) {
 	switch i.Delta {
 	case south:
 		i.Delta = east
@@ -43,8 +49,9 @@ func (i *Interpreter) TurnLeft() {
 	case east:
 		i.Delta = north
 	}
+	return
 }
-func (i *Interpreter) TurnRight() {
+func (i *Interpreter) TurnRight() (exit *eval.ExitCode) {
 	switch i.Delta {
 	case south:
 		i.Delta = west
@@ -55,7 +62,15 @@ func (i *Interpreter) TurnRight() {
 	case east:
 		i.Delta = south
 	}
+	return
 }
-func (i *Interpreter) Reverse() {
+func (i *Interpreter) Reverse() (exit *eval.ExitCode) {
 	i.Delta = i.Delta.Scale(-1)
+	return
+}
+func (i *Interpreter) AbsoluteVector() (exit *eval.ExitCode) {
+	dy := i.Stack.PopCell()
+	dx := i.Stack.PopCell()
+	i.Delta = util.Vec{X: dx, Y: dy}
+	return
 }
