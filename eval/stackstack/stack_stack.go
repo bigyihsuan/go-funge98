@@ -29,6 +29,16 @@ func (ss *StackStack[T]) PopCell() T {
 		return cell
 	}
 }
+func (ss *StackStack[T]) PeekCell() T {
+	var v T
+	if ok, top := ss.stack.Peek(); !ok {
+		return v
+	} else if ok, cell := top.Peek(); !ok {
+		return v
+	} else {
+		return cell
+	}
+}
 
 func (ss *StackStack[T]) PushStack(s *stack.Stack[T]) {
 	ss.stack.Push(s)

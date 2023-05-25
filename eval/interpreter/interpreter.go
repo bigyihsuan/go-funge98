@@ -55,7 +55,7 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 	}
 	i := Interpreter{
 		Ip:           util.Vec{X: 0, Y: 0},
-		Delta:        util.Vec{X: 0, Y: 0},
+		Delta:        east,
 		Space:        s,
 		Stack:        stackstack.New[int](),
 		InStringMode: false,
@@ -79,7 +79,12 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 		'j': (*Interpreter).JumpForward,
 		'q': (*Interpreter).Quit,
 		'k': (*Interpreter).Iterate,
-		// TODO: decision making
+		// decision making
+		'!': (*Interpreter).LogicalNot,
+		'`': (*Interpreter).GreaterThan,
+		'_': (*Interpreter).EastWestIf,
+		'|': (*Interpreter).NorthSouthIf,
+		'w': (*Interpreter).Compare,
 		// data
 		// integers
 		'0': (*Interpreter).PushNumber,
@@ -115,6 +120,7 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 }
 
 func (i *Interpreter) Tick() *eval.ExitCode {
+	fmt.Println(i.Ip, i.Peek(), string(i.CurrentInstruction()))
 	exitCode := i.ExecuteCurrentInstruction()
 	if exitCode != nil {
 		return exitCode
@@ -144,4 +150,14 @@ func (i *Interpreter) Move() {
 
 func (i Interpreter) CurrentInstruction() rune {
 	return i.Space.GetVec(i.Ip)
+}
+
+func (i *Interpreter) Push(v int) {
+	i.Stack.PushCell(v)
+}
+func (i *Interpreter) Pop() int {
+	return i.Stack.PopCell()
+}
+func (i *Interpreter) Peek() int {
+	return i.Stack.PeekCell()
 }

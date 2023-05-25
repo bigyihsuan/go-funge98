@@ -69,8 +69,8 @@ func (i *Interpreter) Reverse() (exit *eval.ExitCode) {
 	return
 }
 func (i *Interpreter) AbsoluteVector() (exit *eval.ExitCode) {
-	dy := i.Stack.PopCell()
-	dx := i.Stack.PopCell()
+	dy := i.Pop()
+	dx := i.Pop()
 	i.Delta = util.Vec{X: dx, Y: dy}
 	return
 }

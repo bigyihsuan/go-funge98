@@ -20,7 +20,7 @@ func (i *Interpreter) JumpOver() (exit *eval.ExitCode) {
 	return
 }
 func (i *Interpreter) JumpForward() (exit *eval.ExitCode) {
-	steps := i.Stack.PopCell()
+	steps := i.Pop()
 	lastDelta := i.Delta
 	if steps < 0 {
 		i.Reverse()
@@ -33,7 +33,7 @@ func (i *Interpreter) JumpForward() (exit *eval.ExitCode) {
 	return
 }
 func (i *Interpreter) Quit() (exit *eval.ExitCode) {
-	return &eval.ExitCode{Code: i.Stack.PopCell()}
+	return &eval.ExitCode{Code: i.Pop()}
 }
 func (i *Interpreter) Iterate() (exit *eval.ExitCode) {
 	// find next instruction
@@ -42,7 +42,7 @@ func (i *Interpreter) Iterate() (exit *eval.ExitCode) {
 	for strings.ContainsRune(MARKERS, i.CurrentInstruction()) { // move to the next non-marker instruction
 		i.Move()
 	}
-	count := i.Stack.PopCell()
+	count := i.Pop()
 	for n := 0; n < count; n++ {
 		i.ExecuteCurrentInstruction()
 	}
