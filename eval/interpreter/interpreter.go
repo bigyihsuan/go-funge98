@@ -18,6 +18,7 @@ type Interpreter struct {
 	Space        *space.Space
 	Stack        stackstack.StackStack[int]
 	instructions map[rune]intepreterFunc
+	InStringMode bool
 }
 
 var LINE_ENDINGS = [3]string{"\n", "\r", "\r\n"}
@@ -53,10 +54,11 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 		return nil, err
 	}
 	i := Interpreter{
-		Ip:    util.Vec{X: 0, Y: 0},
-		Delta: util.Vec{X: 0, Y: 0},
-		Space: s,
-		Stack: stackstack.New[int](),
+		Ip:           util.Vec{X: 0, Y: 0},
+		Delta:        util.Vec{X: 0, Y: 0},
+		Space:        s,
+		Stack:        stackstack.New[int](),
+		InStringMode: false,
 	}
 
 	instructions := map[rune]intepreterFunc{
@@ -101,6 +103,12 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 		'-': (*Interpreter).Subtract,
 		'/': (*Interpreter).Divide,
 		'%': (*Interpreter).Remainder,
+		// strings
+		'"':  (*Interpreter).ToggleStringmode,
+		'\'': (*Interpreter).FetchCharacter,
+		's':  (*Interpreter).StoreCharacter,
+		// TODO: io
+		',': (*Interpreter).Print,
 	}
 	i.instructions = instructions
 	return &i, nil
@@ -108,9 +116,6 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 
 func (i *Interpreter) Tick() *eval.ExitCode {
 	exitCode := i.ExecuteCurrentInstruction()
-	if i.CurrentInstruction() != ' ' {
-		fmt.Printf("curr: `%c`\n", i.CurrentInstruction())
-	}
 	if exitCode != nil {
 		return exitCode
 	}
@@ -118,6 +123,10 @@ func (i *Interpreter) Tick() *eval.ExitCode {
 	return nil
 }
 func (i *Interpreter) ExecuteCurrentInstruction() *eval.ExitCode {
+	if i.InStringMode && i.CurrentInstruction() != '"' {
+		i.Stack.PushCell(int(i.CurrentInstruction()))
+		return nil
+	}
 	switch r := i.CurrentInstruction(); {
 	case r == ' ':
 		return nil // space is a nop

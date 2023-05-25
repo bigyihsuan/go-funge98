@@ -75,6 +75,9 @@ func (s *Space) Set(x, y int, v rune) {
 	s.resize(x, y)
 	s.space[x][y] = v
 }
+func (s Space) SetVec(v util.Vec, r rune) {
+	s.Set(v.X, v.Y, r)
+}
 
 // fmt.Stringer
 func (s Space) String() string {
