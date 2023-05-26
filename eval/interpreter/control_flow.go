@@ -37,7 +37,7 @@ func (i *Interpreter) Quit() (exit *eval.ExitCode) {
 }
 func (i *Interpreter) Iterate() (exit *eval.ExitCode) {
 	// find next instruction
-	currentIp := i.Ip
+	// currentIp := i.Ip
 	i.Move()
 	for strings.ContainsRune(MARKERS, i.CurrentInstruction()) { // move to the next non-marker instruction
 		i.Move()
@@ -46,6 +46,6 @@ func (i *Interpreter) Iterate() (exit *eval.ExitCode) {
 	for n := 0; n < count; n++ {
 		i.ExecuteCurrentInstruction()
 	}
-	i.Ip = currentIp
+	// i.Ip = currentIp
 	return
 }

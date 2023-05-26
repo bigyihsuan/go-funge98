@@ -36,9 +36,8 @@ func main() {
 		}
 	}
 
-	_, s := interpreter.Stack.PopStack()
-	for s.Count() > 0 {
-		_, e := s.Pop()
+	for interpreter.Stack.Count() > 0 {
+		_, e := interpreter.Stack.Pop()
 		fmt.Printf("%v ", e)
 	}
 	fmt.Println()

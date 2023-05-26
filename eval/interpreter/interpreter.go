@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"go-funge98/eval"
 	"go-funge98/eval/space"
-	"go-funge98/eval/stackstack"
 	"go-funge98/util"
 	"os"
 	"regexp"
+
+	"github.com/zeroflucs-given/generics/collections/stack"
 )
 
 type intepreterFunc func(i *Interpreter) *eval.ExitCode
@@ -16,7 +17,7 @@ type Interpreter struct {
 	Ip           util.Vec
 	Delta        util.Vec
 	Space        *space.Space
-	Stack        stackstack.StackStack[int]
+	Stack        *stack.Stack[int]
 	instructions map[rune]intepreterFunc
 	InStringMode bool
 }
@@ -57,7 +58,7 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 		Ip:           util.Vec{X: 0, Y: 0},
 		Delta:        east,
 		Space:        s,
-		Stack:        stackstack.New[int](),
+		Stack:        stack.NewStack[int](16),
 		InStringMode: false,
 	}
 
@@ -112,6 +113,11 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 		'"':  (*Interpreter).ToggleStringmode,
 		'\'': (*Interpreter).FetchCharacter,
 		's':  (*Interpreter).StoreCharacter,
+		// stack ops
+		'$':  (*Interpreter).Pop_,
+		':':  (*Interpreter).Duplicate,
+		'\\': (*Interpreter).Swap,
+		'n':  (*Interpreter).Clear,
 		// TODO: io
 		',': (*Interpreter).Print,
 	}
@@ -130,7 +136,7 @@ func (i *Interpreter) Tick() *eval.ExitCode {
 }
 func (i *Interpreter) ExecuteCurrentInstruction() *eval.ExitCode {
 	if i.InStringMode && i.CurrentInstruction() != '"' {
-		i.Stack.PushCell(int(i.CurrentInstruction()))
+		i.Stack.Push(int(i.CurrentInstruction()))
 		return nil
 	}
 	switch r := i.CurrentInstruction(); {
@@ -153,11 +159,22 @@ func (i Interpreter) CurrentInstruction() rune {
 }
 
 func (i *Interpreter) Push(v int) {
-	i.Stack.PushCell(v)
+	i.Stack.Push(v)
 }
 func (i *Interpreter) Pop() int {
-	return i.Stack.PopCell()
+	if ok, e := i.Stack.Pop(); !ok {
+		return 0
+	} else {
+		return e
+	}
 }
 func (i *Interpreter) Peek() int {
-	return i.Stack.PeekCell()
+	if ok, e := i.Stack.Peek(); !ok {
+		return 0
+	} else {
+		return e
+	}
+}
+func (i Interpreter) IsEmpty() bool {
+	return i.Stack.Count() == 0
 }
