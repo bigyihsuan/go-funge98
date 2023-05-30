@@ -11,7 +11,8 @@ import (
 
 func main() {
 	var opts struct {
-		File  flags.Filename `short:"f" long:"file" value-name:"FILE" description:"Input code file." required:"true"`
+		File  flags.Filename `short:"f" long:"file" value-name:"FILE" description:"Input code file."`
+		Code  flags.Filename `short:"c" long:"code" value-name:"CODE" description:"Argument-provided Befunge code."`
 		Debug bool           `short:"d" long:"debug" description:"Output debugging information."`
 	}
 	_, err := flags.Parse(&opts)
@@ -19,10 +20,28 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("file:%v\n", opts.File)
-	fmt.Printf("debug:%v\n", opts.Debug)
+	if opts.File != "" && opts.Code != "" {
+		fmt.Fprintln(os.Stderr, "-f/--file and -c/--code flags are mutually exclusive")
+		os.Exit(1)
+	}
 
-	interpreter, err := interpreter.NewInterpreter(string(opts.File))
+	var code string
+
+	if opts.File != "" {
+		bytes, err := os.ReadFile(string(opts.File))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		code = string(bytes)
+	} else if opts.Code != "" {
+		code = string(opts.Code)
+	}
+
+	// fmt.Printf("file:%v\n", opts.File)
+	// fmt.Printf("debug:%v\n", opts.Debug)
+
+	interpreter, err := interpreter.NewInterpreter(code)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

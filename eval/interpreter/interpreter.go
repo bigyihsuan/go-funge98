@@ -26,12 +26,7 @@ var LINE_ENDINGS = [3]string{"\n", "\r", "\r\n"}
 
 const MARKERS = " ;"
 
-func LoadFile(filename string) (*space.Space, error) {
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	code := string(bytes)
+func MakeSpace(code string) (*space.Space, error) {
 	lines := regexp.MustCompile(`\r\n|\n|\r`).Split(code, -1)
 
 	// default to square space
@@ -49,8 +44,8 @@ func LoadFile(filename string) (*space.Space, error) {
 	return &codeSpace, nil
 }
 
-func NewInterpreter(filename string) (*Interpreter, error) {
-	s, err := LoadFile(filename)
+func NewInterpreter(code string) (*Interpreter, error) {
+	s, err := MakeSpace(code)
 	if err != nil {
 		return nil, err
 	}
@@ -118,8 +113,11 @@ func NewInterpreter(filename string) (*Interpreter, error) {
 		':':  (*Interpreter).Duplicate,
 		'\\': (*Interpreter).Swap,
 		'n':  (*Interpreter).Clear,
-		// TODO: io
-		',': (*Interpreter).Print,
+		// io
+		'.': (*Interpreter).OutputDecimal,
+		',': (*Interpreter).OutputCharacter,
+		'&': (*Interpreter).InputDecimal,
+		'~': (*Interpreter).InputCharacter,
 	}
 	i.instructions = instructions
 	return &i, nil
